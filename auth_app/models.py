@@ -31,3 +31,9 @@ class User(AbstractUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser or super().has_module_perms(app_label)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    first_name = models.CharField(max_length=30, blank=True, null=True)
+    last_name = models.CharField(max_length=30, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
