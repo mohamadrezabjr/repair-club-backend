@@ -52,3 +52,16 @@ class Car(models.Model):
     @property
     def plate_number(self):
         return f'{self.plate_first:02d}{self.plate_letter}{self.plate_second:03d}{self.plate_region:02d}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    'plate_first',
+                    'plate_letter',
+                    'plate_second',
+                    'plate_region',
+                ],
+                name='unique_plate_number'
+            )
+        ]
