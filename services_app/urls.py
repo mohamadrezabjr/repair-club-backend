@@ -1,5 +1,6 @@
 from django.urls import path
-from services_app.views.car import CarCreateView
+from services_app.views.car import CarCreateAPIView, CarListAPIView
 urlpatterns = [
-    path('car/create', CarCreateView.as_view(), name="car_create")
+    path('cars/create', CarCreateAPIView.as_view(), name="car_create"),
+    path('cars/', CarListAPIView.as_view(), name="car_list"),
 ]
