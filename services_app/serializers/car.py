@@ -7,10 +7,13 @@ class CarCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = [
-            'plate_number',
             'owner',
             'model',
             'manufacturing_date',
             'in_garage',
-            'last_mileage'
+            'last_mileage',
+            'plate_first',
+            'plate_letter',
+            'plate_second',
+            'plate_region',
         ]
