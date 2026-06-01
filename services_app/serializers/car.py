@@ -3,7 +3,7 @@ from services_app.models.car import Car
 from auth_app.models import User
 
 class CarCreateSerializer(serializers.ModelSerializer):
-    owner = serializers.SlugRelatedField(slug_field='phone', queryset=User.objects.all())
+    owner = serializers.SlugRelatedField(slug_field='phone', queryset=User.objects.all(), required=False)
     class Meta:
         model = Car
         fields = [
