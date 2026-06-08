@@ -36,7 +36,7 @@ class CarCreateSerializer(serializers.ModelSerializer):
         return car
 
 class CarListSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField()
+    owner = UserSerializer(read_only=True, required=False)
 
     class Meta:
         model = Car
@@ -53,6 +53,3 @@ class CarListSerializer(serializers.ModelSerializer):
             'plate_region',
             'plate_number',
         ]
-
-    def get_owner(self, obj):
-        return UserSerializer(obj.owner).data
