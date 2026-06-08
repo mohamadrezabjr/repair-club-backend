@@ -8,6 +8,7 @@ class CarCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = [
+            'id',
             'owner',
             'model',
             'manufacturing_date',
@@ -40,6 +41,7 @@ class CarListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = [
+            'id',
             'owner',
             'model',
             'manufacturing_date',
