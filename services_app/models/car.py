@@ -38,7 +38,7 @@ class Car(models.Model):
     ]
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     model = models.ForeignKey(CarModel, on_delete=models.SET_NULL, null=True, blank=True)
-    manufacturing_date = models.IntegerField(null=True, blank=True)
+    manufacturing_year = models.IntegerField(null=True, blank=True)
     registration_date = models.DateTimeField(auto_now_add=True)
     in_garage = models.BooleanField(default=True)
     last_visit_date = models.DateTimeField(null=True, blank=True)
