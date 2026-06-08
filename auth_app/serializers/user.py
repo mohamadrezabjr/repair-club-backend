@@ -12,11 +12,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for user objects"""
+    profile = ProfileSerializer(required=False)
     class Meta:
         model = User
         fields = [
             'id',
             'phone',
+            'profile',
         ]
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
