@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from services_app.models.car import Car
+from services_app.models.car import Car, CarModel
 from auth_app.models import User
 from auth_app.serializers.user import UserSerializer
 
@@ -35,8 +35,16 @@ class CarCreateSerializer(serializers.ModelSerializer):
         )
         return car
 
+class CarModelSerializer(serializers.ModelSerializer):
+    """Serializer for CarModel"""
+
+    class Meta:
+        model = CarModel
+        fields = '__all__'
+
 class CarListSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True, required=False)
+    model = CarModelSerializer(read_only=True, required=False)
 
     class Meta:
         model = Car
