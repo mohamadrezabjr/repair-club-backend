@@ -1,5 +1,5 @@
 from rest_framework import generics
-from services_app.serializers.car import CarCreateSerializer, CarListSerializer, CarModelSerializer
+from services_app.serializers.car import CarCreateSerializer, CarListSerializer, CarModelSerializer, CarUpdateSerializer
 from services_app.models.car import Car, CarModel
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
@@ -21,4 +21,9 @@ class CarModelListAPIView(generics.ListAPIView):
 class CarModelCreateAPIView(generics.CreateAPIView):
     serializer_class = CarModelSerializer
     queryset = CarModel.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+class CarUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = CarUpdateSerializer
+    queryset = Car.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]

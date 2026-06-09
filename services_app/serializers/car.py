@@ -61,3 +61,20 @@ class CarListSerializer(serializers.ModelSerializer):
             'plate_region',
             'plate_number',
         ]
+
+class CarUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Car
+        fields = [
+            'id',
+            'owner',
+            'model',
+            'manufacturing_year',
+            'last_mileage',
+            'plate_first',
+            'plate_letter',
+            'plate_second',
+            'plate_region',
+            'plate_number',
+        ]
