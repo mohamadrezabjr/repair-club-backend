@@ -16,6 +16,7 @@ class Visit(models.Model):
     status = models.CharField(choices=VISIT_STATUS_CHOICES, max_length=30, default='queued')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    description = models.TextField(null=True, blank=True)
 
     @property
     def is_ready(self):
