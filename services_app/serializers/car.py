@@ -78,3 +78,9 @@ class CarUpdateSerializer(serializers.ModelSerializer):
             'plate_region',
             'plate_number',
         ]
+class CarModelUpdateSerializer(serializers.ModelSerializer):
+    """serializer for update CarModel"""
+
+    class Meta:
+        model = CarModel
+        fields = '__all__'
