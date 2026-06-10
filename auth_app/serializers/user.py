@@ -37,3 +37,21 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         profile = Profile.objects.create(**profile, user=user)
         return UserSerializer(user).data
+
+class UserTempCreateSerializer(serializers.ModelSerializer):
+    """Serializer for user creation with temp password"""
+    profile = ProfileSerializer(required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            'phone',
+            'profile'
+        ]
+
+    def create(self, validated_data):
+        profile = validated_data.pop('profile', None)
+        if profile:
+            profile = Profile.objects.create(**profile)
+        user = User.objects.create_user(**validated_data, password=validated_data.get('phone'), profile=profile)
+        return UserSerializer(user).data
