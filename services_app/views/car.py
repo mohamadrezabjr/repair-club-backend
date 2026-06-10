@@ -23,6 +23,11 @@ class CarModelListAPIView(generics.ListAPIView):
     queryset = CarModel.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+class CarModelRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = CarModelSerializer
+    queryset = CarModel.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
 class CarModelCreateAPIView(generics.CreateAPIView):
     serializer_class = CarModelSerializer
     queryset = CarModel.objects.all()
