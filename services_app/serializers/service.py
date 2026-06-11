@@ -13,3 +13,15 @@ class ServiceCreateSerializer(serializers.ModelSerializer):
             'car_model',
             'base_price',
         ]
+
+class ServiceUpdateSerializer(serializers.ModelSerializer):
+    """ Serializer for updating existing services. """
+    class Meta:
+        model = Service
+        fields = [
+            'id',
+            'title',
+            'description',
+            'car_model',
+            'base_price',
+        ]
