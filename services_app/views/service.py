@@ -18,3 +18,8 @@ class ServiceRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Service.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ServiceReadSerializer
+
+class ServiceListAPIView(generics.ListAPIView):
+    queryset = Service.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = ServiceReadSerializer

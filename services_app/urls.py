@@ -1,7 +1,8 @@
 from django.urls import path
 from services_app.views.car import CarCreateAPIView, CarListAPIView, CarModelListAPIView, CarModelCreateAPIView, \
     CarUpdateAPIView, CarRetrieveAPIView, CarModelRetrieveAPIView, CarModelUpdateAPIView
-from services_app.views.service import ServiceCreateAPIView, ServiceUpdateAPIView, ServiceRetrieveAPIView
+from services_app.views.service import ServiceCreateAPIView, ServiceUpdateAPIView, ServiceRetrieveAPIView, \
+    ServiceListAPIView
 from services_app.views.visit import VisitCreateAPIView
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path('models/<int:pk>/update', CarModelUpdateAPIView.as_view(), name="car_model_update"),
     path('models/create/', CarModelCreateAPIView.as_view(), name="car_model_create"),
 
+    path('services/', ServiceListAPIView.as_view(), name="service_list"),
     path('services/create/', ServiceCreateAPIView.as_view(), name="service_create"),
     path('services/update/<int:pk>', ServiceUpdateAPIView.as_view(), name="service_update"),
     path('services/<int:pk>', ServiceRetrieveAPIView.as_view(), name="service_retrieve"),
