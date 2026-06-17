@@ -1,0 +1,1 @@
+from inventory_app.models.product import Product, ProductType
