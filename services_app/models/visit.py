@@ -11,7 +11,7 @@ class Visit(models.Model):
         ('cancelled', 'لغو شده'),
     ]
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
-    services = models.ManyToManyField(ServiceOrder, blank=True, null=True, related_name='visits')
+    services = models.ManyToManyField(ServiceOrder, blank=True, related_name='visits')
 #   products    TODO
     status = models.CharField(choices=VISIT_STATUS_CHOICES, max_length=30, default='queued')
     created_at = models.DateTimeField(auto_now_add=True)
