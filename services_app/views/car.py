@@ -6,17 +6,22 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 class CarCreateAPIView(generics.CreateAPIView):
     serializer_class = CarCreateSerializer
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().select_related("owner__profile", "model")
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class CarListAPIView(generics.ListAPIView):
     serializer_class = CarListSerializer
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().select_related("owner__profile", "model")
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class CarRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CarListSerializer
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().select_related("owner__profile", "model")
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+class CarUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = CarUpdateSerializer
+    queryset = Car.objects.all().select_related("owner__profile", "model")
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class CarModelListAPIView(generics.ListAPIView):
@@ -32,11 +37,6 @@ class CarModelRetrieveAPIView(generics.RetrieveAPIView):
 class CarModelCreateAPIView(generics.CreateAPIView):
     serializer_class = CarModelSerializer
     queryset = CarModel.objects.all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
-class CarUpdateAPIView(generics.UpdateAPIView):
-    serializer_class = CarUpdateSerializer
-    queryset = Car.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 class CarModelUpdateAPIView(generics.UpdateAPIView):
