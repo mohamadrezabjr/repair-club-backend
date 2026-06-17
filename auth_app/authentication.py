@@ -20,9 +20,4 @@ class JWTAuthenticationByCookie(BaseAuthentication):
         except Exception:
             raise AuthenticationFailed("Invalid or expired token")
 
-        else :
-            token_version = access_token.get('token_version')
-            if token_version < user.token_version:
-                raise AuthenticationFailed("Invalid or expired token")
-
         return (user, None)
