@@ -5,21 +5,21 @@ from services_app.serializers.service import ServiceWriteSerializer, ServiceRead
 
 
 class ServiceCreateAPIView(generics.CreateAPIView):
-    queryset = Service.objects.all()
+    queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ServiceWriteSerializer
 
 class ServiceUpdateAPIView(generics.UpdateAPIView):
-    queryset = Service.objects.all()
+    queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ServiceWriteSerializer
 
 class ServiceRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = Service.objects.all()
+    queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ServiceReadSerializer
 
 class ServiceListAPIView(generics.ListAPIView):
-    queryset = Service.objects.all()
+    queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ServiceReadSerializer
