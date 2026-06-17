@@ -23,6 +23,12 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    @property
+    def role(self):
+        if self.is_superuser or self.is_staff:
+            return 'admin'
+        return 'user'
+
     def __str__(self):
         return self.phone or self.get_username()
 

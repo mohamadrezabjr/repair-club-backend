@@ -19,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'phone',
             'profile',
+            'role'
         ]
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
