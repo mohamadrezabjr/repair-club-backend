@@ -1,1 +1,1 @@
-from inventory_app.models.product import Product, ProductType
+from inventory_app.models.product import Product, ProductType, ProductOrder
