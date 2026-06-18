@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from services_app.models import Service
+from services_app.models import Service, ServiceOrder
 from services_app.serializers.car import CarModelSerializer
 
 class ServiceWriteSerializer(serializers.ModelSerializer):
@@ -26,3 +26,14 @@ class ServiceReadSerializer(serializers.ModelSerializer):
             'car_model',
             'base_price',
         ]
+
+class ServiceOrderReadSerializer(serializers.ModelSerializer):
+    service = ServiceReadSerializer(read_only=True)
+    class Meta:
+        model = ServiceOrder
+        fields = '__all__'
+
+class ServiceOrderWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceOrder
+        fields = '__all__'

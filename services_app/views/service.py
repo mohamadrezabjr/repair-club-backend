@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from services_app.models import Service
-from services_app.serializers.service import ServiceWriteSerializer, ServiceReadSerializer
+from services_app.models import Service, ServiceOrder
+from services_app.serializers.service import ServiceWriteSerializer, ServiceReadSerializer, ServiceOrderWriteSerializer, ServiceOrderReadSerializer
 
 class ServiceListCreateAPIView(generics.ListCreateAPIView):
     queryset = Service.objects.all().select_related('car_model')
@@ -20,3 +20,21 @@ class ServiceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         if self.request.method in ['PATCH', "PUT"]:
             return ServiceWriteSerializer
         return ServiceReadSerializer
+
+class ServiceOrderListCreateAPIView(generics.ListCreateAPIView):
+    queryset = ServiceOrder.objects.all().select_related('service__car_model')
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ServiceOrderWriteSerializer
+        return ServiceOrderReadSerializer
+
+class ServiceOrderRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ServiceOrder.objects.all().select_related('service__car_model')
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get_serializer_class(self):
+        if self.request.method in ['PATCH', 'PUT']:
+            return ServiceOrderWriteSerializer
+        return ServiceOrderReadSerializer
