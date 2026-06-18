@@ -12,7 +12,7 @@ class Visit(models.Model):
     ]
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
     services = models.ManyToManyField(ServiceOrder, blank=True, related_name='visits')
-#   products    TODO
+    product_orders = models.ManyToManyField("inventory_app.ProductOrder", blank=True, related_name='visits')
     status = models.CharField(choices=VISIT_STATUS_CHOICES, max_length=30, default='queued')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
