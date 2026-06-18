@@ -1,6 +1,6 @@
 from django.db import models
-from services_app.models.car import Car
-from services_app.models.service import ServiceOrder
+from garage_app.models.car import Car
+from garage_app.models.service import ServiceOrder
 
 class Visit(models.Model):
     VISIT_STATUS_CHOICES = [

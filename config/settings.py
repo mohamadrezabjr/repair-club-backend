@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
 
     'auth_app',
-    'services_app',
+    'garage_app',
     'inventory_app',
 ]
 

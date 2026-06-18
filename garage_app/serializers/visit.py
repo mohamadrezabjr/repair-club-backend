@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from services_app.models import Visit
+from garage_app.models import Visit
 
 
 class VisitCreateSerializer(serializers.ModelSerializer):

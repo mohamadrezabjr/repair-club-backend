@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from services_app.models import Service, ServiceOrder
-from services_app.serializers.service import ServiceWriteSerializer, ServiceReadSerializer, ServiceOrderWriteSerializer, ServiceOrderReadSerializer
+from garage_app.models import Service, ServiceOrder
+from garage_app.serializers.service import ServiceWriteSerializer, ServiceReadSerializer, ServiceOrderWriteSerializer, ServiceOrderReadSerializer
 
 class ServiceListCreateAPIView(generics.ListCreateAPIView):
     queryset = Service.objects.all().select_related('car_model')

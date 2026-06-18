@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from services_app.models import Service, ServiceOrder
-from services_app.serializers.car import CarModelSerializer
+from garage_app.models import Service, ServiceOrder
+from garage_app.serializers.car import CarModelReadSerializer
 
 class ServiceWriteSerializer(serializers.ModelSerializer):
     """ Serializer for creating and updating services. """
@@ -16,7 +16,7 @@ class ServiceWriteSerializer(serializers.ModelSerializer):
 
 class ServiceReadSerializer(serializers.ModelSerializer):
     """ Serializer for retrieving service information. """
-    car_model = CarModelSerializer(read_only=True)
+    car_model = CarModelReadSerializer(read_only=True)
     class Meta:
         model = Service
         fields = [

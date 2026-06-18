@@ -1,5 +1,5 @@
 from django.db import models
-from services_app.models.car import CarModel
+from garage_app.models.car import CarModel
 
 class Service(models.Model):
     title = models.CharField(max_length=100)

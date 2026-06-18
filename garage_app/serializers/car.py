@@ -1,9 +1,20 @@
 from rest_framework import serializers
-from services_app.models.car import Car, CarModel
+from garage_app.models.car import Car, CarModel
 from auth_app.models import User
 from auth_app.serializers.user import UserSerializer
 
-class CarCreateSerializer(serializers.ModelSerializer):
+class CarModelReadSerializer(serializers.ModelSerializer):
+    """Serializer for CarModel"""
+    class Meta:
+        model = CarModel
+        fields = '__all__'
+
+class CarModelWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarModel
+        fields = '__all__'
+
+class CarWriteSerializer(serializers.ModelSerializer):
     owner = serializers.SlugRelatedField(slug_field='phone', queryset=User.objects.all(), required=False)
     class Meta:
         model = Car
@@ -35,16 +46,9 @@ class CarCreateSerializer(serializers.ModelSerializer):
         )
         return car
 
-class CarModelSerializer(serializers.ModelSerializer):
-    """Serializer for CarModel"""
-
-    class Meta:
-        model = CarModel
-        fields = '__all__'
-
-class CarListSerializer(serializers.ModelSerializer):
+class CarReadSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True, required=False)
-    model = CarModelSerializer(read_only=True, required=False)
+    model = CarModelReadSerializer(read_only=True, required=False)
 
     class Meta:
         model = Car
@@ -62,25 +66,3 @@ class CarListSerializer(serializers.ModelSerializer):
             'plate_number',
         ]
 
-class CarUpdateSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Car
-        fields = [
-            'id',
-            'owner',
-            'model',
-            'manufacturing_year',
-            'last_mileage',
-            'plate_first',
-            'plate_letter',
-            'plate_second',
-            'plate_region',
-            'plate_number',
-        ]
-class CarModelUpdateSerializer(serializers.ModelSerializer):
-    """serializer for update CarModel"""
-
-    class Meta:
-        model = CarModel
-        fields = '__all__'

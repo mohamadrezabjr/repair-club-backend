@@ -6,7 +6,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('auth_app.urls')),
-    path('service/', include('services_app.urls')),
+    path('garage/', include('garage_app.urls')),
     path('inventory/', include('inventory_app.urls')),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

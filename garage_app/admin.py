@@ -1,7 +1,7 @@
 from django.contrib import admin
-from services_app.models.car import Car, CarModel
-from services_app.models.service import Service, ServiceOrder
-from services_app.models.visit import Visit
+from garage_app.models.car import Car, CarModel
+from garage_app.models.service import Service, ServiceOrder
+from garage_app.models.visit import Visit
 
 admin.site.register(CarModel)
 admin.site.register(Car)
