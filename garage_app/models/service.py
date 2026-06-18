@@ -6,6 +6,7 @@ class Service(models.Model):
     description = models.TextField(null=True, blank=True)
     car_model = models.ForeignKey(CarModel, on_delete=models.SET_NULL, null=True)
     base_price = models.BigIntegerField(null=True, blank=True)
+    products_needed = models.ManyToManyField("inventory_app.ProductType", blank=True, related_name='services')
 
     def __str__(self):
         return self.title
