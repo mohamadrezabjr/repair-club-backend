@@ -3,23 +3,20 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from services_app.models import Service
 from services_app.serializers.service import ServiceWriteSerializer, ServiceReadSerializer
 
-
-class ServiceCreateAPIView(generics.CreateAPIView):
+class ServiceListCreateAPIView(generics.ListCreateAPIView):
     queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = ServiceWriteSerializer
 
-class ServiceUpdateAPIView(generics.UpdateAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ServiceWriteSerializer
+        return ServiceReadSerializer
+
+class ServiceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all().select_related('car_model')
     permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = ServiceWriteSerializer
 
-class ServiceRetrieveAPIView(generics.RetrieveAPIView):
-    queryset = Service.objects.all().select_related('car_model')
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = ServiceReadSerializer
-
-class ServiceListAPIView(generics.ListAPIView):
-    queryset = Service.objects.all().select_related('car_model')
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = ServiceReadSerializer
+    def get_serializer_class(self):
+        if self.request.method in ['PATCH', "PUT"]:
+            return ServiceWriteSerializer
+        return ServiceReadSerializer
