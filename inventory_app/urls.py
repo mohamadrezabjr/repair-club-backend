@@ -1,7 +1,7 @@
 from django.urls import path
 from inventory_app.views.product import ProductListAPIView, ProductRetrieveAPIView, ProductUpdateAPIView, \
     ProductDeleteAPIView, ProductCreateAPIView, ProductTypeRetrieveAPIView, ProductTypeCreateAPIView, \
-    ProductTypeDeleteAPIView, ProductTypeUpdateAPIView, ProductTypeListAPIView
+    ProductTypeDeleteAPIView, ProductTypeUpdateAPIView, ProductTypeListAPIView, ProductOrderListCreateAPIView, ProductOrderRetrieveUpdateDestroyAPIView
 
 urlpatterns = [
     path('products/', ProductListAPIView.as_view(), name='product-list'),
@@ -15,4 +15,7 @@ urlpatterns = [
     path('product_types/create/', ProductTypeCreateAPIView.as_view(), name='product-type-create'),
     path('product_types/<int:pk>/update/', ProductTypeUpdateAPIView.as_view(), name='product-type-update'),
     path('product_types/<int:pk>/delete/', ProductTypeDeleteAPIView.as_view(), name='product-type-delete'),
+
+    path('product_orders/', ProductOrderListCreateAPIView.as_view(), name='product-order-list'),
+    path('product_orders/<int:pk>', ProductOrderRetrieveUpdateDestroyAPIView.as_view(), name='product-order-detail'),
 ]
