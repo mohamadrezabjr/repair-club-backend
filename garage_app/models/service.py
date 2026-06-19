@@ -7,6 +7,7 @@ class Service(models.Model):
     car_model = models.ForeignKey(CarModel, on_delete=models.SET_NULL, null=True)
     base_price = models.BigIntegerField(null=True, blank=True)
     products_needed = models.ManyToManyField("inventory_app.ProductType", blank=True, related_name='services')
+    mileage_interval = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.title
