@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'auth_app',
     'garage_app',
     'inventory_app',
+    'notifications_app',
 ]
 
 MIDDLEWARE = [
