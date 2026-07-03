@@ -20,3 +20,7 @@ class ProductOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     quantity = models.IntegerField()
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity

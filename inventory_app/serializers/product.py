@@ -20,6 +20,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
 class ProductOrderReadSerializer(serializers.ModelSerializer):
     product = ProductReadSerializer(read_only=True)
+    total_price = serializers.BigIntegerField(read_only=True)
     class Meta:
         model = ProductOrder
         fields = '__all__'
