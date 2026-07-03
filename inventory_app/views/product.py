@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from inventory_app.models import Product, ProductType, ProductOrder
@@ -6,48 +6,29 @@ from inventory_app.serializers.product import ProductReadSerializer, ProductWrit
     ProductOrderWriteSerializer, ProductOrderReadSerializer
 
 
-class ProductCreateAPIView(CreateAPIView):
+class ProductListCreateAPIView(ListCreateAPIView):
     queryset = Product.objects.all().prefetch_related('product_type')
-    serializer_class = ProductWriteSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
-class ProductRetrieveAPIView(RetrieveAPIView):
-    queryset = Product.objects.all().prefetch_related('product_type')
-    serializer_class = ProductReadSerializer
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ProductWriteSerializer
+        return ProductReadSerializer
 
-class ProductListAPIView(ListAPIView):
+class ProductRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all().prefetch_related('product_type')
-    serializer_class = ProductReadSerializer
-
-class ProductUpdateAPIView(UpdateAPIView):
-    queryset = Product.objects.all().prefetch_related('product_type')
-    serializer_class = ProductWriteSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+    def get_serializer_class(self):
+        if self.request.method in  ['PUT', 'PATCH']:
+            return ProductWriteSerializer
+        return ProductReadSerializer
 
-class ProductDeleteAPIView(DestroyAPIView):
-    queryset = Product.objects.all().prefetch_related('product_type')
-    serializer_class = ProductWriteSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
-class ProductTypeCreateAPIView(CreateAPIView):
+class ProductTypeListCreateAPIView(ListCreateAPIView):
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
-class ProductTypeRetrieveAPIView(RetrieveAPIView):
-    queryset = ProductType.objects.all()
-    serializer_class = ProductTypeSerializer
-
-class ProductTypeListAPIView(ListAPIView):
-    queryset = ProductType.objects.all()
-    serializer_class = ProductTypeSerializer
-
-class ProductTypeUpdateAPIView(UpdateAPIView):
-    queryset = ProductType.objects.all()
-    serializer_class = ProductTypeSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
-class ProductTypeDeleteAPIView(DestroyAPIView):
+class ProductTypeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
