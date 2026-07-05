@@ -6,6 +6,18 @@ from inventory_app.serializers.product import ProductTypeSerializer
 
 class ServiceWriteSerializer(serializers.ModelSerializer):
     """ Serializer for creating and updating services. """
+    id = serializers.IntegerField(allow_null=True, required=False)
+    title = serializers.CharField(max_length=100, required=False, allow_null=True)
+
+    def get_or_create_service(self, validated_data):
+        service_id = validated_data.get('id')
+        if service_id:
+            try:
+                return Service.objects.get(id=service_id)
+            except Service.DoesNotExist:
+                raise serializers.ValidationError("Service does not exist")
+        return Service.objects.create(**validated_data)
+
     class Meta:
         model = Service
         fields = '__all__'
@@ -25,6 +37,21 @@ class ServiceOrderReadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ServiceOrderWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(allow_null=True, required=False)
+    service = ServiceWriteSerializer()
+
+    def save_nested(self, validated_data):
+        service_order_id = validated_data.get('id')
+        if service_order_id:
+            try:
+                return ServiceOrder.objects.get(id=service_order_id)
+            except ServiceOrder.DoesNotExist:
+                raise serializers.ValidationError("Service order does not exist")
+        else:
+            service_data = validated_data.pop('service')
+            service = ServiceWriteSerializer().get_or_create_service(service_data)
+            return ServiceOrder.objects.create(service=service, **validated_data)
+
     class Meta:
         model = ServiceOrder
         fields = '__all__'
