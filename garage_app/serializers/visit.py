@@ -6,8 +6,8 @@ from garage_app.serializers.service import ServiceOrderReadSerializer, ServiceOr
 from inventory_app.serializers.product import ProductOrderReadSerializer, ProductOrderWriteSerializer
 
 class VisitWriteSerializer(serializers.ModelSerializer):
-    service_orders = ServiceOrderWriteSerializer(many=True)
-    product_orders = ProductOrderWriteSerializer(many=True)
+    service_orders = ServiceOrderWriteSerializer(many=True, allow_null=True, required=False)
+    product_orders = ProductOrderWriteSerializer(many=True, allow_null=True, required=False)
 
     class Meta:
         model = Visit
