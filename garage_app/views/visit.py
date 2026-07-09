@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from garage_app.models import Visit
-from garage_app.serializers.visit import VisitReadSerializer, VisitWriteSerializer, VisitAddServiceOrderSerializer
+from garage_app.serializers.visit import VisitReadSerializer, VisitWriteSerializer, VisitAddOrdersSerializer
 
 class VisitListCreateAPIView(ListCreateAPIView):
     queryset = Visit.objects.all().select_related('car__owner__profile', 'car__model').prefetch_related('service_orders', 'product_orders')
@@ -19,8 +19,8 @@ class VistRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             return VisitWriteSerializer
         return VisitReadSerializer
 
-class VisitAddServiceOrderAPIView(CreateAPIView):
-    serializer_class = VisitAddServiceOrderSerializer
+class VisitAddOrdersAPIView(CreateAPIView):
+    serializer_class = VisitAddOrdersSerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
 
     def perform_create(self, serializer):

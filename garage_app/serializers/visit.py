@@ -56,22 +56,34 @@ class VisitReadSerializer(serializers.ModelSerializer):
         model = Visit
         fields = '__all__'
 
-class VisitAddServiceOrderSerializer(serializers.Serializer):
-    service_orders = ServiceOrderWriteSerializer(many=True)
+class VisitAddOrdersSerializer(serializers.Serializer):
+    service_orders = ServiceOrderWriteSerializer(many=True, required=False)
+    product_orders = ProductOrderWriteSerializer(many=True, required=False)
 
     def create(self, validated_data):
         visit_id = validated_data.get('visit_id')
         try:
             with transaction.atomic():
                 visit = Visit.objects.get(id=visit_id)
-                service_orders = validated_data.get('service_orders')
-                orders_to_add = []
+                service_orders = validated_data.get('service_orders', [])
+                service_orders_to_add = []
 
                 for service_order in service_orders:
                     service_order_obj = ServiceOrderWriteSerializer().save_nested(service_order)
-                    orders_to_add.append(service_order_obj)
+                    service_orders_to_add.append(service_order_obj)
 
-                visit.service_orders.add(*orders_to_add)
+                visit.service_orders.add(*service_orders_to_add)
+
+                product_orders = validated_data.get('product_orders', [])
+                product_orders_to_add = []
+        
+                for product_order in product_orders:
+                    serializer = ProductOrderWriteSerializer(data=product_order)
+                    serializer.is_valid(raise_exception=True)
+                    product_order_obj = serializer.save()
+                    product_orders_to_add.append(product_order_obj)
+        
+                visit.product_orders.add(*product_orders_to_add)
         except Visit.DoesNotExist:
             raise serializers.ValidationError("Visit not found")
         return visit
