@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from auth_app.models import User, Profile
 
@@ -49,10 +50,10 @@ class UserTempCreateSerializer(serializers.ModelSerializer):
             'phone',
             'profile'
         ]
-
+    @transaction.atomic
     def create(self, validated_data):
         profile = validated_data.pop('profile', None)
+        user = User.objects.create_user(**validated_data, password=validated_data.get('phone'))
         if profile:
-            profile = Profile.objects.create(**profile)
-        user = User.objects.create_user(**validated_data, password=validated_data.get('phone'), profile=profile)
-        return UserSerializer(user).data
+            profile = Profile.objects.create(**profile, user=user)
+        return user
