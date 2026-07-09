@@ -13,12 +13,39 @@ class VisitWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Visit
         fields = '__all__'
-
+        
+    @transaction.atomic
     def create(self, validated_data):
-        car_data = validated_data.get('car')
+        service_orders_data = validated_data.pop('service_orders', [])
+        product_orders_data = validated_data.pop('product_orders', [])
+        
+        car_data = validated_data.pop('car')
         car_obj = CarWriteSerializer().get_or_create_car(car_data)
-        validated_data['car'] = car_obj.id
-        return super().create(validated_data)
+
+        visit = Visit.objects.create(car=car_obj, **validated_data)
+        
+        service_orders_to_add = []
+        product_orders_to_add = []
+        
+        for service_order_data in service_orders_data:
+            service_order = ServiceOrderWriteSerializer().save_nested(service_order_data)
+            service_orders_to_add.append(service_order)
+            
+        for product_order_data in product_orders_data:
+            serializer = ProductOrderWriteSerializer(data=product_order_data)   
+            serializer.is_valid(raise_exception=True)
+            product_order = serializer.save()
+            product_orders_to_add.append(product_order)
+            
+        if service_orders_to_add:
+            visit.service_orders.set(service_orders_to_add)
+        if product_orders_to_add:
+            visit.product_orders.set(product_orders_to_add)
+
+        visit.save()
+        
+        return visit
+        
 
 class VisitReadSerializer(serializers.ModelSerializer):
     car = CarReadSerializer(read_only=True)
