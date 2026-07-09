@@ -29,3 +29,14 @@ def auth_me(request):
         data = UserSerializer(request.user).data
         return Response(data, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+class SearchUserAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all().select_related('profile')
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.kwargs.get('phone')
+        if q:
+            queryset = queryset.filter(phone__icontains=q)
+        return queryset
