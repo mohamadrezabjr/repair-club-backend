@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from garage_app.models.car import Car, CarModel
 from auth_app.models import User
@@ -28,6 +29,7 @@ class CarModelWriteSerializer(serializers.ModelSerializer):
         return car_model 
 
 class CarWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
     owner = serializers.SlugRelatedField(slug_field='phone', queryset=User.objects.all(), required=False)
     model = CarModelWriteSerializer(required=False)
 
@@ -51,11 +53,12 @@ class CarWriteSerializer(serializers.ModelSerializer):
             'plate_region',
         ]
         validators = []
-
+        
+    @transaction.atomic
     def create(self, validated_data):
         model_data = validated_data.pop('model')
         model_obj = CarModelWriteSerializer().get_or_create_model(model_data)
-        validated_data['model'] = model_obj.id
+        validated_data['model'] = model_obj
         
         plate_first = validated_data.pop('plate_first')
         plate_letter = validated_data.pop('plate_letter')
