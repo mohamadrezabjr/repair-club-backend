@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from garage_app.models.car import Car, CarModel
 from auth_app.models import User
-from auth_app.serializers.user import UserSerializer
+from auth_app.serializers.user import UserSerializer, UserTempCreateSerializer
 
 class CarModelReadSerializer(serializers.ModelSerializer):
     """Serializer for CarModel"""
@@ -30,7 +30,7 @@ class CarModelWriteSerializer(serializers.ModelSerializer):
 
 class CarWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    owner = serializers.SlugRelatedField(slug_field='phone', queryset=User.objects.all(), required=False)
+    owner = UserSerializer(required=False, allow_null=True)
     model = CarModelWriteSerializer(required=False)
 
     plate_first = serializers.IntegerField(required=False, allow_null=True)
@@ -59,6 +59,19 @@ class CarWriteSerializer(serializers.ModelSerializer):
         model_data = validated_data.pop('model')
         model_obj = CarModelWriteSerializer().get_or_create_model(model_data)
         validated_data['model'] = model_obj
+
+        owner_data = validated_data.pop('owner')
+        owner_id = owner_data.pop('id', None)
+        if owner_id:
+            try:
+                owner = User.objects.get(id=owner_id)
+                validated_data['owner'] = owner
+            except User.DoesNotExist:
+                raise serializers.ValidationError(f'Owner with id {owner_id} does not exist')
+        else:
+            serializer = UserTempCreateSerializer(data=owner_data)
+            serializer.is_valid(raise_exception=True)
+            validated_data['owner'] = serializer.save()
         
         plate_first = validated_data.pop('plate_first')
         plate_letter = validated_data.pop('plate_letter')
