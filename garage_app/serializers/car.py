@@ -12,7 +12,7 @@ class CarModelReadSerializer(serializers.ModelSerializer):
 
 class CarModelWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    
+    model = serializers.CharField(required=False, allow_blank=True, max_length=100)
     class Meta:
         model = CarModel
         fields = '__all__'
