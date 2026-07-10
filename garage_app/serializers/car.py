@@ -32,7 +32,7 @@ class CarModelWriteSerializer(serializers.ModelSerializer):
 
 class CarWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    owner = UserSerializer(required=False, allow_null=True)
+    owner = UserTempCreateSerializer(required=False, allow_null=True)
     model = CarModelWriteSerializer(required=False)
 
     plate_first = serializers.IntegerField(required=False, allow_null=True)
@@ -71,7 +71,8 @@ class CarWriteSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f'Owner with id {owner_id} does not exist')
         else:
             serializer = UserTempCreateSerializer(data=owner_data)
-            serializer.is_valid(raise_exception=True)
+            print("owner_data:", owner_data)
+            serializer.is_valid()
             validated_data['owner'] = serializer.save()
         
         plate_first = validated_data.pop('plate_first')
@@ -121,6 +122,7 @@ class CarIsInGarageSerializer(serializers.Serializer):
     plate_letter = serializers.CharField(max_length=10)
     plate_second = serializers.IntegerField()
     plate_region = serializers.IntegerField()
+    active_visit = serializers.SerializerMethodField(read_only=True)
 
     def get_in_garage(self, validated_data):
         plate_first = validated_data.get('plate_first')
@@ -138,3 +140,24 @@ class CarIsInGarageSerializer(serializers.Serializer):
             return car.is_in_garage()
         except Car.DoesNotExist:
             return False
+    
+    def get_active_visit(self, validated_data):
+        from garage_app.serializers.visit import VisitReadSerializer
+        plate_first = validated_data.get('plate_first')
+        plate_letter = validated_data.get('plate_letter')
+        plate_second = validated_data.get('plate_second')
+        plate_region = validated_data.get('plate_region')
+
+        try:
+            car = Car.objects.get(
+                plate_first=plate_first,
+                plate_letter=plate_letter,
+                plate_second=plate_second,
+                plate_region=plate_region
+            )
+            active_visit = car.visits.exclude(status__in=['delivered', 'cancelled']).last()
+            if active_visit:
+                return VisitReadSerializer(active_visit).data
+            return None
+        except Car.DoesNotExist:
+            return None

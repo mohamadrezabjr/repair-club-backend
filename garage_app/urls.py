@@ -22,5 +22,5 @@ urlpatterns = [
     path('visits/<int:pk>/', VistRetrieveUpdateDestroyAPIView.as_view(), name="visit_retrieve_update_destroy"),
     path('visits/<int:visit_id>/orders/', VisitAddOrdersAPIView.as_view(), name="visit_add_orders"),
 
-    path('cars/is-in-garage/', car_is_in_garage, name="car_is_in_garage"),
+    path('cars/is_in_garage/', car_is_in_garage, name="car_is_in_garage"),
 ]
