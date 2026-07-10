@@ -53,7 +53,7 @@ class Car(models.Model):
         return f'{self.plate_first:02d}{self.plate_letter}{self.plate_second:03d}{self.plate_region:02d}'
 
     def is_in_garage(self):
-        return self.visits.exclude(status__in=['cancelled', 'delevered']).exists()
+        return self.visits.exclude(status__in=['cancelled', 'delivered']).exists()
         
     class Meta:
         constraints = [
