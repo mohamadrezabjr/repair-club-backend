@@ -10,7 +10,7 @@ class Visit(models.Model):
         ('delivered', 'تحویل داده شده'),
         ('cancelled', 'لغو شده'),
     ]
-    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
+    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, related_name='visits')
     service_orders = models.ManyToManyField(ServiceOrder, blank=True, related_name='visits')
     product_orders = models.ManyToManyField("inventory_app.ProductOrder", blank=True, related_name='visits')
     status = models.CharField(choices=VISIT_STATUS_CHOICES, max_length=30, default='queued')
@@ -21,4 +21,4 @@ class Visit(models.Model):
     @property
     def is_ready(self):
         """ Check if all services are done. """
-        return not self.services.exclude(status='done').exists()
+        return not self.service_orders.exclude(status='done').exists()

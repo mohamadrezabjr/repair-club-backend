@@ -21,6 +21,9 @@ class VisitWriteSerializer(serializers.ModelSerializer):
         
         car_data = validated_data.pop('car')
         car_obj = CarWriteSerializer().get_or_create_car(car_data)
+        
+        if car_obj.is_in_garage():
+            raise serializers.ValidationError({'car': 'Car is in garage.'})
 
         visit = Visit.objects.create(car=car_obj, **validated_data)
         
