@@ -1,3 +1,5 @@
+import re
+
 from django.db import transaction
 from rest_framework import serializers
 from garage_app.models.car import Car, CarModel
@@ -113,3 +115,26 @@ class CarReadSerializer(serializers.ModelSerializer):
             'plate_number',
         ]
 
+class CarIsInGarageSerializer(serializers.Serializer):
+    in_garage = serializers.SerializerMethodField(read_only=True)
+    plate_first = serializers.IntegerField()
+    plate_letter = serializers.CharField(max_length=10)
+    plate_second = serializers.IntegerField()
+    plate_region = serializers.IntegerField()
+
+    def get_in_garage(self, validated_data):
+        plate_first = validated_data.get('plate_first')
+        plate_letter = validated_data.get('plate_letter')
+        plate_second = validated_data.get('plate_second')
+        plate_region = validated_data.get('plate_region')
+
+        try:
+            car = Car.objects.get(
+                plate_first=plate_first,
+                plate_letter=plate_letter,
+                plate_second=plate_second,
+                plate_region=plate_region
+            )
+            return car.is_in_garage()
+        except Car.DoesNotExist:
+            return False
