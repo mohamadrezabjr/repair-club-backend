@@ -43,6 +43,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserTempCreateSerializer(serializers.ModelSerializer):
     """Serializer for user creation with temp password"""
     profile = ProfileSerializer(required=False)
+    phone = serializers.CharField(max_length=11, validators=[])
 
     class Meta:
         model = User
@@ -50,10 +51,16 @@ class UserTempCreateSerializer(serializers.ModelSerializer):
             'phone',
             'profile'
         ]
+        
     @transaction.atomic
     def create(self, validated_data):
         profile = validated_data.pop('profile', None)
-        user = User.objects.create_user(**validated_data, password=validated_data.get('phone'))
+        phone = validated_data.get('phone')
+        
+        existed_user = User.objects.filter(phone=phone).first()
+        if existed_user:
+            return existed_user
+        user = User.objects.create_user(**validated_data, password=phone)
         if profile:
             profile = Profile.objects.create(**profile, user=user)
         return user
