@@ -1,6 +1,6 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from django.db import transaction
 from inventory_app.models import Product, ProductType, ProductOrder
 from inventory_app.serializers.product import ProductReadSerializer, ProductWriteSerializer, ProductTypeSerializer, \
     ProductOrderWriteSerializer, ProductOrderReadSerializer
@@ -50,3 +50,11 @@ class ProductOrderRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH']:
             return ProductOrderWriteSerializer
         return ProductOrderReadSerializer
+        
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        product = Product.objects.select_for_update().get(pk=instance.product.pk)
+        product.stock += instance.quantity
+        product.save()
+        instance.delete()
+        return None
