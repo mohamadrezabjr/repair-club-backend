@@ -1,5 +1,6 @@
 from django.db import models
 from garage_app.models.car import CarModel
+from garage_app.models.staff import Staff
 
 class Service(models.Model):
     title = models.CharField(max_length=100)
@@ -23,8 +24,9 @@ class ServiceOrder(models.Model):
     extra_description = models.TextField(null=True, blank=True)
     price = models.BigIntegerField()
     status = models.CharField(choices=SERVICE_STATUS_CHOICES, max_length=30, default='pending')
+    staff = models.ManyToManyField(Staff, blank=True, related_name='service_orders', verbose_name="سرویس‌کاران")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return self.title or f"سرویس #{self.id}"

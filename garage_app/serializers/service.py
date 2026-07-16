@@ -1,7 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
-from garage_app.models import Service, ServiceOrder
+from garage_app.models import Service, ServiceOrder, Staff
 from garage_app.serializers.car import CarModelReadSerializer
+from garage_app.serializers.staff import StaffReadSerializer
 from inventory_app.serializers.product import ProductTypeSerializer
 
 
@@ -47,6 +48,7 @@ class ServiceReadSerializer(serializers.ModelSerializer):
 
 class ServiceOrderReadSerializer(serializers.ModelSerializer):
     service = ServiceReadSerializer(read_only=True)
+    staff = StaffReadSerializer(many=True, read_only=True)
     class Meta:
         model = ServiceOrder
         fields = '__all__'
@@ -54,12 +56,14 @@ class ServiceOrderReadSerializer(serializers.ModelSerializer):
 class ServiceOrderWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(allow_null=True, required=False)
     service = ServiceWriteSerializer()
+    staff = serializers.PrimaryKeyRelatedField(queryset=Staff.objects.all(), many=True, required=False, allow_null=True)
 
 
     @transaction.atomic
     def save_nested(self, validated_data):
 
         service_order_id = validated_data.get('id')
+        staff_data = validated_data.pop('staff', [])
         if service_order_id:
             try:
                 service_order = ServiceOrder.objects.get(id=service_order_id)
@@ -70,6 +74,8 @@ class ServiceOrderWriteSerializer(serializers.ModelSerializer):
             service = ServiceWriteSerializer().get_or_create_service(service_data)
             service_order = ServiceOrder.objects.create(service=service, **validated_data)
 
+        if staff_data:
+            service_order.staff.set(staff_data)
         return service_order
 
     class Meta:
