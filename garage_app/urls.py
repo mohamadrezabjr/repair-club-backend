@@ -3,7 +3,7 @@ from garage_app.views.car import CarListCreateAPIView, CarRetrieveUpdateDestroyA
     CarModelRetrieveUpdateDestroyAPIView, car_is_in_garage
 from garage_app.views.service import ServiceRetrieveUpdateDestroyAPIView, ServiceListCreateAPIView, \
     ServiceOrderListCreateAPIView, ServiceOrderRetrieveUpdateDestroyAPIView
-from garage_app.views.visit import VisitListCreateAPIView, VistRetrieveUpdateDestroyAPIView, VisitAddOrdersAPIView
+from garage_app.views.visit import VisitListCreateAPIView, VistRetrieveUpdateDestroyAPIView, VisitAddOrdersAPIView, VisitSearchAPIView
 
 urlpatterns = [
     path('cars/', CarListCreateAPIView.as_view(), name="car_list"),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('service_orders/', ServiceOrderListCreateAPIView.as_view(), name="service_order_list_create"),
     path('service_orders/<int:pk>/', ServiceOrderRetrieveUpdateDestroyAPIView.as_view(), name="service_order_retrieve_update_destroy"),
 
+    path('visits/search/', VisitSearchAPIView.as_view(), name="visit_search"),
     path('visits/', VisitListCreateAPIView.as_view(), name="visit_list_create"),
     path('visits/<int:pk>/', VistRetrieveUpdateDestroyAPIView.as_view(), name="visit_retrieve_update_destroy"),
     path('visits/<int:visit_id>/orders/', VisitAddOrdersAPIView.as_view(), name="visit_add_orders"),
