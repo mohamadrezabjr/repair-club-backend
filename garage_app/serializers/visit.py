@@ -1,14 +1,16 @@
 from rest_framework import serializers
 from django.db import transaction
-from garage_app.models import Visit
+from garage_app.models import Visit, Staff
 from garage_app.serializers.car import CarReadSerializer, CarWriteSerializer
 from garage_app.serializers.service import ServiceOrderReadSerializer, ServiceOrderWriteSerializer
+from garage_app.serializers.staff import StaffReadSerializer
 from inventory_app.serializers.product import ProductOrderReadSerializer, ProductOrderWriteSerializer
 
 class VisitWriteSerializer(serializers.ModelSerializer):
     service_orders = ServiceOrderWriteSerializer(many=True, allow_null=True, required=False)
     product_orders = ProductOrderWriteSerializer(many=True, allow_null=True, required=False)
     car = CarWriteSerializer()
+    staff = serializers.PrimaryKeyRelatedField(queryset=Staff.objects.all(), many=True, required=False, allow_null=True)
 
     class Meta:
         model = Visit
@@ -18,7 +20,8 @@ class VisitWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         service_orders_data = validated_data.pop('service_orders', [])
         product_orders_data = validated_data.pop('product_orders', [])
-        
+        staff_data = validated_data.pop('staff', [])
+
         car_data = validated_data.pop('car')
         car_obj = CarWriteSerializer().get_or_create_car(car_data)
         
@@ -44,6 +47,8 @@ class VisitWriteSerializer(serializers.ModelSerializer):
             visit.service_orders.set(service_orders_to_add)
         if product_orders_to_add:
             visit.product_orders.set(product_orders_to_add)
+        if staff_data:
+            visit.staff.set(staff_data)
 
         visit.save()
         
@@ -54,6 +59,7 @@ class VisitReadSerializer(serializers.ModelSerializer):
     car = CarReadSerializer(read_only=True)
     service_orders = ServiceOrderReadSerializer(many=True, read_only=True)
     product_orders = ProductOrderReadSerializer(many=True, read_only=True)
+    staff = StaffReadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Visit
@@ -62,6 +68,7 @@ class VisitReadSerializer(serializers.ModelSerializer):
 class VisitAddOrdersSerializer(serializers.Serializer):
     service_orders = ServiceOrderWriteSerializer(many=True, required=False)
     product_orders = ProductOrderWriteSerializer(many=True, required=False)
+    staff = serializers.PrimaryKeyRelatedField(queryset=Staff.objects.all(), many=True, required=False, allow_null=True)
 
     def create(self, validated_data):
         visit_id = validated_data.get('visit_id')
@@ -87,6 +94,10 @@ class VisitAddOrdersSerializer(serializers.Serializer):
                     product_orders_to_add.append(product_order_obj)
         
                 visit.product_orders.add(*product_orders_to_add)
+
+                staff_data = validated_data.get('staff', [])
+                if staff_data:
+                    visit.staff.add(*staff_data)
         except Visit.DoesNotExist:
             raise serializers.ValidationError("Visit not found")
         return visit
