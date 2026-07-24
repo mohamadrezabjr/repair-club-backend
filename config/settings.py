@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'garage_app',
     'inventory_app',
     'notifications_app',
+    'accounting_app',
 ]
 
 MIDDLEWARE = [

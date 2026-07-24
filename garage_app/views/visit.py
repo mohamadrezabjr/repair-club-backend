@@ -1,5 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 from django.db.models import Q
 from garage_app.models import Visit
 from garage_app.serializers.visit import VisitReadSerializer, VisitWriteSerializer, VisitAddOrdersSerializer
@@ -24,9 +26,14 @@ class VisitAddOrdersAPIView(CreateAPIView):
     serializer_class = VisitAddOrdersSerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
 
-    def perform_create(self, serializer):
-        visit_id = self.kwargs.get('visit_id')
-        serializer.save(visit_id=visit_id)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        visit = serializer.save(visit_id=self.kwargs.get('visit_id'))
+        # پاسخ را با سریالایزر خواندن برمی‌گردانیم تا شامل total_price و
+        # شکل کامل و یکدست ویزیت باشد (سریالایزر نوشتن total_price ندارد).
+        read = VisitReadSerializer(visit, context=self.get_serializer_context())
+        return Response(read.data, status=status.HTTP_201_CREATED)
 
 class VisitSearchAPIView(ListAPIView):
     serializer_class = VisitReadSerializer
