@@ -67,6 +67,30 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         validated_data.pop('id', None)
         return self.get_or_create_product(validated_data)
 
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """
+        ویرایش محصول (PATCH/PUT inventory/products/<id>/).
+        فیلدهای ساده (نام، قیمت، موجودی، توضیحات) به‌روزرسانی می‌شوند و نوع کالای
+        تودرتو با get_or_create مدیریت می‌شود تا خطای nested-writable رخ ندهد.
+        """
+        validated_data.pop('id', None)
+
+        # نوع کالا فقط اگر در بادی آمده باشد تغییر می‌کند
+        if 'product_type' in validated_data:
+            product_type_data = validated_data.pop('product_type')
+            if product_type_data:
+                instance.product_type = ProductTypeSerializer().get_or_create_product_type(product_type_data)
+            else:
+                instance.product_type = None
+
+        for attr in ('name', 'price', 'stock', 'description'):
+            if attr in validated_data and validated_data[attr] is not None:
+                setattr(instance, attr, validated_data[attr])
+
+        instance.save()
+        return instance
+
 class ProductOrderReadSerializer(serializers.ModelSerializer):
     product = ProductReadSerializer(read_only=True)
     total_price = serializers.BigIntegerField(read_only=True)
