@@ -22,6 +22,6 @@ class ProductOrderAdmin(admin.ModelAdmin):
 
 @admin.register(StockEntry)
 class StockEntryAdmin(admin.ModelAdmin):
-    list_display = ('product', 'quantity', 'unit_cost', 'supplier', 'created_at')
+    list_display = ('product', 'quantity', 'unit_purchase_price', 'unit_selling_price', 'supplier', 'created_at')
     search_fields = ('product__name', 'supplier')
     date_hierarchy = 'created_at'

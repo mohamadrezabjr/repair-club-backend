@@ -16,11 +16,19 @@ class StockEntryReadSerializer(serializers.ModelSerializer):
 class StockEntryWriteSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     # قیمت اختیاری است؛ اگر وارد نشود قیمت فعلی کالا حفظ می‌شود
-    unit_cost = serializers.BigIntegerField(required=False, allow_null=True)
-
+    unit_selling_price = serializers.BigIntegerField(required=False, allow_null=True)
+    unit_purchase_price = serializers.BigIntegerField(required=False, allow_null=True)
     class Meta:
         model = StockEntry
-        fields = ['id', 'product', 'quantity', 'unit_cost', 'supplier', 'description']
+        fields = [
+            'id',
+            'product',
+            'quantity',
+            'unit_purchase_price',
+            'unit_selling_price',
+            'supplier',
+            'description'
+        ]
 
     def validate_quantity(self, value):
         if value <= 0:
@@ -31,16 +39,22 @@ class StockEntryWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         product = Product.objects.select_for_update().get(pk=validated_data['product'].pk)
 
-        new_price = validated_data.get('unit_cost')
+        new_selling_price = validated_data.get('unit_selling_price')
+        new_purchase_price = validated_data.get('unit_purchase_price')
+
         update_fields = ['stock', 'updated_at']
 
-        if new_price:
-            # قیمت جدید وارد شده → قیمت کالا به‌روزرسانی می‌شود (بالاتر یا پایین‌تر)
-            product.price = new_price
-            update_fields.append('price')
+        if new_selling_price:
+            product.selling_price = new_selling_price
+            update_fields.append('selling_price')
         else:
-            # قیمت وارد نشده → قیمت قبلی حفظ و در تاریخچه‌ی این ورود ثبت می‌شود
-            validated_data['unit_cost'] = product.price
+            validated_data['unit_selling_price'] = product.selling_price
+
+        if new_purchase_price:
+            product.purchase_price = new_purchase_price
+            update_fields.append('purchase_price')
+        else:
+            validated_data['unit_purchase_price'] = product.purchase_price
 
         entry = StockEntry.objects.create(**validated_data)
         product.stock += entry.quantity

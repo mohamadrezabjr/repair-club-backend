@@ -15,7 +15,8 @@ class StockEntry(models.Model):
         verbose_name="کالا",
     )
     quantity = models.PositiveIntegerField(verbose_name="تعداد")
-    unit_cost = models.BigIntegerField(verbose_name="بهای خرید هر واحد (تومان)")
+    unit_selling_price = models.BigIntegerField(verbose_name="بهای فروش هر واحد (تومان)")
+    unit_purchase_price = models.BigIntegerField(verbose_name="بهای خرید هر واحد (تومان)")
     supplier = models.CharField(max_length=150, blank=True, null=True, verbose_name="تأمین‌کننده")
     description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +28,7 @@ class StockEntry(models.Model):
 
     @property
     def total_cost(self):
-        return self.unit_cost * self.quantity
+        return self.unit_purchase_price * self.quantity
 
     def __str__(self):
         return f"{self.product.name} × {self.quantity}"
