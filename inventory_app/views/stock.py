@@ -62,7 +62,7 @@ class InventoryReportAPIView(APIView):
             product_count=Count('id'),
             total_units=Coalesce(Sum('stock'), Value(0)),
             total_value=Coalesce(
-                Sum(F('stock') * F('price'), output_field=IntegerField()),
+                Sum(F('stock') * F('selling_price'), output_field=IntegerField()),
                 Value(0),
             ),
         )
@@ -70,7 +70,7 @@ class InventoryReportAPIView(APIView):
         low_stock = list(
             products.filter(stock__lte=threshold)
             .order_by('stock')
-            .values('id', 'name', 'stock', 'price')
+            .values('id', 'name', 'stock', 'selling_price')
         )
         out_of_stock = products.filter(stock__lte=0).count()
 

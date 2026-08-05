@@ -10,7 +10,7 @@ class ProductTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'product_type', 'price', 'stock', 'updated_at')
+    list_display = ('name', 'product_type', 'selling_price', 'purchase_price', 'stock', 'updated_at')
     list_filter = ('product_type',)
     search_fields = ('name',)
 
