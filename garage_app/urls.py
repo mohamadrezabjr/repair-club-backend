@@ -1,6 +1,6 @@
 from django.urls import path
 from garage_app.views.car import CarListCreateAPIView, CarRetrieveUpdateDestroyAPIView, CarModelListCreateAPIView, \
-    CarModelRetrieveUpdateDestroyAPIView, car_is_in_garage
+    CarModelRetrieveUpdateDestroyAPIView, car_is_in_garage, CarSearchAPIView
 from garage_app.views.service import ServiceRetrieveUpdateDestroyAPIView, ServiceListCreateAPIView, \
     ServiceOrderListCreateAPIView, ServiceOrderRetrieveUpdateDestroyAPIView
 from garage_app.views.staff import StaffListCreateAPIView, StaffRetrieveUpdateDestroyAPIView, StaffRoleListCreateAPIView, StaffRoleRetrieveUpdateDestroyAPIView
@@ -9,6 +9,7 @@ from garage_app.views.visit import VisitListCreateAPIView, VistRetrieveUpdateDes
 urlpatterns = [
     path('cars/', CarListCreateAPIView.as_view(), name="car_list"),
     path('cars/<int:pk>', CarRetrieveUpdateDestroyAPIView.as_view(), name="car_retrieve"),
+    path('cars/search/', CarSearchAPIView.as_view(), name="car_search"),
 
     path('models/', CarModelListCreateAPIView.as_view(), name="car_model_list_create"),
     path('models/<int:pk>', CarModelRetrieveUpdateDestroyAPIView.as_view(), name="car_model_retrieve_update_destroy"),
