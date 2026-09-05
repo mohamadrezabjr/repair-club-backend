@@ -10,7 +10,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     selling_price = models.BigIntegerField()
-    purchase_price = models.BigIntegerField()
+    purchase_price = models.BigIntegerField(blank=True, null=True)
     product_type = models.ForeignKey(ProductType, on_delete=models.SET_NULL, null=True, related_name='products')
     stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
