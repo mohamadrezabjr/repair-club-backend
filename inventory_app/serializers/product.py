@@ -4,7 +4,6 @@ from django.db import transaction
 
 class ProductTypeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
-    # name اختیاری است تا بتوان نوع موجود را فقط با {"id": ...} ارجاع داد
     name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     class Meta:
         model = ProductType
@@ -31,7 +30,8 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
     product_type = ProductTypeSerializer(required=False, allow_null=True)
     name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    price = serializers.BigIntegerField(required=False, allow_null=True)
+    purchase_price = serializers.BigIntegerField(required=False, allow_null=True)
+    selling_price = serializers.BigIntegerField(required=False, allow_null=True)
     stock = serializers.IntegerField(required=False, allow_null=True)
     
     class Meta:
@@ -59,24 +59,13 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        """
-        ساخت مستقیم محصول از endpoint (POST inventory/products/).
-        نوع کالای تودرتو ({"id": ...} موجود یا {"id": null, "name": ...} جدید)
-        با همان منطق get_or_create مدیریت می‌شود تا خطای nested-writable رخ ندهد.
-        """
         validated_data.pop('id', None)
         return self.get_or_create_product(validated_data)
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        """
-        ویرایش محصول (PATCH/PUT inventory/products/<id>/).
-        فیلدهای ساده (نام، قیمت، موجودی، توضیحات) به‌روزرسانی می‌شوند و نوع کالای
-        تودرتو با get_or_create مدیریت می‌شود تا خطای nested-writable رخ ندهد.
-        """
         validated_data.pop('id', None)
 
-        # نوع کالا فقط اگر در بادی آمده باشد تغییر می‌کند
         if 'product_type' in validated_data:
             product_type_data = validated_data.pop('product_type')
             if product_type_data:
@@ -84,7 +73,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             else:
                 instance.product_type = None
 
-        for attr in ('name', 'price', 'stock', 'description'):
+        for attr in ('name', 'selling_price', 'purchase_price', 'stock', 'description'):
             if attr in validated_data and validated_data[attr] is not None:
                 setattr(instance, attr, validated_data[attr])
 

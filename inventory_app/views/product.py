@@ -1,4 +1,4 @@
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db import transaction
 from inventory_app.models import Product, ProductType, ProductOrder
@@ -24,9 +24,14 @@ class ProductRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return ProductReadSerializer
 
 class ProductTypeListCreateAPIView(ListCreateAPIView):
-    queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get_queryset(self):
+        queryset = ProductType.objects.all()
+        name = self.request.query_params.get('name', '').strip()
+        qs = queryset.filter(name__icontains=name)
+        return qs
 
 class ProductTypeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = ProductType.objects.all()
